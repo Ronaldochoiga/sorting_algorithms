@@ -1,99 +1,75 @@
 #include "sort.h"
 
 /**
- * quick_sort - Function that sorts an array
- * @array: Array to be sorted by the function
- * @size: Size of array to be sorted
- * Return: zero
+ * quick_sort - functionsorts an array with the Quicksort algorithm
+ * @array: array of ints to sort
+ * @size: size of the array
  */
 void quick_sort(int *array, size_t size)
 {
-	size_t piv;
-
-	if (!array || size < 2)
+	if (size < 2)
 		return;
 
-	print_sort(array, size, 1);
-
-	/* partition and get piv index */
-	piv = partition(array, size);
-
-	/* repeat for left of index */
-	quick_sort(array, piv);
-	/* repeat for index and right */
-	quick_sort(array + piv, size - piv);
+	quick_recursion(array, 0, (int)size - 1, size);
 }
 
 /**
- * swap - Function that swaps two values based on the algorithmic function
- *
- * @a: Fisrt value
- * @b: Second value
- * Return: 0
+ * quick_recursion - helper function for the Quicksort algorithm
+ * @array: array to be sorted
+ * @left: index of the left element
+ * @right: index of the right element
+ * @size: size of the array
  */
-void swap(int *a, int *b)
+void quick_recursion(int *array, int left, int right, size_t size)
 {
-	int Tmp;
+	int pivot;
 
-	Tmp = *b;
-	*b = *a;
-	*a = Tmp;
-}
-
-/**
- * partition - Function that sets the piv for quick_sort inorder to sort
- * @array: Array to partition
- * @size: Size of array
- * Return: (i + 1)
- */
-size_t partition(int array[], size_t size)
-{
-	int piv;
-	size_t a = -1;
-	size_t b;
-
-	if (!array || size < 2)
-		return (0);
-
-	piv = array[size - 1];
-
-	for (b = 0; b < size - 1; b++)
+	if (left < right)
 	{
-		if (array[b] <= piv)
+		pivot = partition(array, left, right, size);
+		quick_recursion(array, left, pivot - 1, size);
+		quick_recursion(array, pivot + 1, right, size);
+	}
+}
+
+/**
+ * partition - gives a pivot index for Quicksort algorithm
+ * @array: array to find the pivot function in
+ * @left: index of the left element
+ * @right: index of the right element
+ * @size: size of the array generated
+ *
+ * Return: the index of the pivot element
+ */
+int partition(int *array, int left, int right, size_t size)
+{
+	int temp, a;
+	int b;
+
+	a = left - 1;
+
+	for (b = left; b < right; b++)
+	{
+		if (array[b] < array[right])
 		{
 			a++;
 			if (a != b)
 			{
-				swap(&array[a], &array[b]);
-				print_sort(array, size, 0);
+				temp = array[a];
+				array[a] = array[b];
+				array[b] = temp;
+				print_array(array, size);
 			}
 		}
 	}
-	if (a + 1 != size - 1)
+
+	if (array[right] < array[a + 1])
 	{
-		swap(&array[a + 1], &array[size - 1]);
-		print_sort(array, size, 0);
+		temp = array[a + 1];
+		array[a + 1] = array[right];
+		array[right] = temp;
+		print_array(array, size);
 	}
+
 	return (a + 1);
-}
-
-/**
- * print_sort - Function that prints the sorted array
- * @array: Array to be printed
- * @size: Size of array
- * @init: initializes the array
- * Return: zero
- */
-void print_sort(int array[], size_t size, int init)
-{
-	static int *i = (void *)0;
-	static size_t j;
-
-	if (!i && init)
-	{
-		i = array;
-		j = size;
-	}
-	if (!init)
-		print_array(i, j);
 }
